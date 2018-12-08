@@ -3,7 +3,7 @@ require 'ostruct'
 require 'exifr/jpeg'
 require 'csv'
 require 'nokogiri'
-require_relative './find'
+require 'find'
 
 class Options
   def self.parse(args)
@@ -45,12 +45,17 @@ class Main
   NA = 'NA'
 
   def self.run(options)
-    files = Find.match("#{options[:directory]}") do |f| 
-      ext = File.extname(f)
-      ext && ext.downcase == options[:ext]
-    end
-
+    files = self.matches(options[:directory], options[:ext])
     options[:html] ? self.write_html(options[:filename], files) : self.write_csv(options[:filename], files)
+  end
+
+  def self.matches(directory, extension)
+    matches = []
+    Find.find(directory) do |path|
+      ext = File.extname(path)
+      matches << path if ext && ext.downcase == extension
+    end
+    matches
   end
 
   def self.write_csv(filename, files)
