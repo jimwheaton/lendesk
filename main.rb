@@ -22,7 +22,7 @@ class Options
         options[:filename] = f
       end
 
-      opts.on("-h", "--html", "Write HTML instead of CSV") do
+      opts.on("--html", "Write HTML instead of CSV") do
         options[:html] = true
       end
 
@@ -51,41 +51,36 @@ class Options
 
     options
   end
-end 
+end
 
-class Main
+class ExifWriter
   Headers =  %i[filename latitude longitude]
   NA = 'NA'
 
-  def self.run(options)
-    begin
-      files = self.matches(options[:directory], options[:ext])
-      options[:html] ? self.write_html(options[:filename], files) : self.write_csv(options[:filename], files)
-    rescue
-      $stderr.print("Error: #{$!}\n")
-      exit
-    end
+  def get_file_meta(file)
+    gps = EXIFR::JPEG.new(file).gps
+    coords = gps.nil? ? { lat: NA, long: NA } : { lat: gps.latitude, long: gps.longitude }
+    { filename: File.basename(file) }.merge(coords)
   end
 
-  def self.matches(directory, extension)
-    matches = []
-    Find.find(directory) do |path|
-      ext = File.extname(path)
-      matches << path if ext && ext.downcase == extension
-    end
-    matches
+  def write(filename, files)
+    raise NotImplementedError.new("#{self.class.name}#write is an abstract method")
   end
+end
 
-  def self.write_csv(filename, files)
+class CsvWriter < ExifWriter
+  def write(filename, files)
     CSV.open(filename, "w") do |csv|
       csv << Headers
       files.each do |file|
-        csv << self.get_file_meta(file).values
+        csv << get_file_meta(file).values
       end
     end
   end
+end
 
-  def self.write_html(filename, files)
+class HtmlWriter < ExifWriter
+  def write(filename, files)
     builder = Nokogiri::HTML::Builder.new do |doc|
       doc.html {
         doc.body {
@@ -98,7 +93,7 @@ class Main
             doc.tbody {
               files.each do |file|
                 doc.tr {
-                  self.get_file_meta(file).values.each { |val| doc.td val }
+                  get_file_meta(file).values.each { |val| doc.td val }
                 }
               end
             }
@@ -108,13 +103,33 @@ class Main
     end
     File.open(filename, 'w') { |f| f.puts builder.to_html }
   end
+end
 
-  def self.get_file_meta(file)
-    gps = EXIFR::JPEG.new(file).gps
-    coords = gps.nil? ? { lat: NA, long: NA } : { lat: gps.latitude, long: gps.longitude }
-    { filename: File.basename(file) }.merge(coords)
+class Main
+  def run(options)
+    begin
+      files = matches(options[:directory], options[:ext])
+
+      if(options[:html])
+        HtmlWriter.new.write(options[:filename], files)
+      else
+        CsvWriter.new.write(options[:filename], files)
+      end
+    rescue
+      $stderr.print("Error: #{$!}\n")
+      exit
+    end
+  end
+
+  def matches(directory, extension)
+    matches = []
+    Find.find(directory) do |path|
+      ext = File.extname(path)
+      matches << path if ext && ext.downcase == extension
+    end
+    matches
   end
 
 end
 
-Main.run(Options.parse(ARGV))
+Main.new.run(Options.parse(ARGV))
