@@ -1,0 +1,15 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    OptionParser (0.5.1)
+    exifr (1.3.5)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  OptionParser
+  exifr
+
+BUNDLED WITH
+   1.17.1
