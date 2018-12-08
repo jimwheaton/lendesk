@@ -4,8 +4,9 @@ Writes EXIF GPS metadata to a .csv or .html file
 
 ### Building and installing the gem
 
-1. `gem build exif.gemspec`
-2. `gem install exif-0.1.0.gem`
+1. `bundle install`
+2. `gem build exif.gemspec`
+3. `gem install exif-0.1.0.gem`
 
 ### Running from the command line
 
