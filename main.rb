@@ -8,6 +8,7 @@ require 'find'
 class Options
   def self.parse(args)
     options = OpenStruct.new
+
     options[:html] = false
     options[:directory] = "./"
     options[:ext] = ".jpg"
@@ -25,7 +26,7 @@ class Options
         options[:html] = true
       end
 
-      opts.on("-d", "--directory [DIRECTORY]", "Choose directory to process") do |d|
+      opts.on("-d", "--directory DIRECTORY", "Choose directory to process") do |d|
         options[:directory] = d
       end
 
@@ -35,7 +36,19 @@ class Options
       end
     end
 
-    opt_parser.parse!(args)
+    begin
+      opt_parser.parse!(args)
+    rescue OptionParser::ParseError
+      $stderr.print("Argument Error: #{$!}\n")
+      exit
+    end
+
+    # set default filename if not supplied
+    unless options[:filename]
+      ext = options[:html] ? 'html' : 'csv'
+      options[:filename] = "exif_data_#{Time.now.strftime("%s")}.#{ext}"
+    end
+
     options
   end
 end 
@@ -45,8 +58,13 @@ class Main
   NA = 'NA'
 
   def self.run(options)
-    files = self.matches(options[:directory], options[:ext])
-    options[:html] ? self.write_html(options[:filename], files) : self.write_csv(options[:filename], files)
+    begin
+      files = self.matches(options[:directory], options[:ext])
+      options[:html] ? self.write_html(options[:filename], files) : self.write_csv(options[:filename], files)
+    rescue
+      $stderr.print("Error: #{$!}\n")
+      exit
+    end
   end
 
   def self.matches(directory, extension)
