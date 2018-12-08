@@ -41,13 +41,12 @@ class Options
 end 
 
 class Main
-
   Headers =  %i[filename latitude longitude]
   NA = 'NA'
 
   def self.run(options)
     files = Find.match("#{options[:directory]}") do |f| 
-      ext = f[-4..f.size]
+      ext = File.extname(f)
       ext && ext.downcase == options[:ext]
     end
 
@@ -58,9 +57,7 @@ class Main
     CSV.open(filename, "w") do |csv|
       csv << Headers
       files.each do |file|
-        gps = EXIFR::JPEG.new(file).gps
-        coords = gps.nil? ? { lat: 'NA', long: 'NA' } : { lat: gps.latitude, long: gps.longitude }
-        csv << [file, coords[:lat], coords[:long]]
+        csv << self.get_file_meta(file).values
       end
     end
   end
@@ -76,9 +73,9 @@ class Main
               }
             }
             doc.tbody {
-              files.map(&self.get_file_meta).each do |meta|
+              files.each do |file|
                 doc.tr {
-                  Headers.each { |header| doc.td meta[header]}
+                  self.get_file_meta(file).values.each { |val| doc.td val }
                 }
               end
             }
@@ -86,13 +83,13 @@ class Main
         }
       }
     end
-    builder.to_html
+    File.open(filename, 'w') { |f| f.puts builder.to_html }
   end
 
   def self.get_file_meta(file)
     gps = EXIFR::JPEG.new(file).gps
     coords = gps.nil? ? { lat: NA, long: NA } : { lat: gps.latitude, long: gps.longitude }
-    { filename: file }.merge(coords)
+    { filename: File.basename(file) }.merge(coords)
   end
 
 end
