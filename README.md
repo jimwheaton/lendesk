@@ -1,6 +1,6 @@
-# LenDesk EXIF utility
+# LenDesk EXIF GPS metadata utility
 
-Writes EXIF metadata to a .csv or .html file
+Writes EXIF GPS metadata to a .csv or .html file
 
 ### Building and installing the gem
 
