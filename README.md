@@ -1,4 +1,4 @@
-# LenDesk EXIF GPS metadata utility
+# Lendesk EXIF GPS metadata utility
 
 Writes EXIF GPS metadata to a .csv or .html file
 
