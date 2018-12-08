@@ -5,8 +5,27 @@ require_relative './writers/exif_writer'
 require_relative './writers/csv_writer'
 require_relative './writers/html_writer'
 
-class Options
-  def self.parse(args)
+class Exif
+
+  def run(args)
+    Process.setproctitle('EXIF Writer')
+    options = parse_args(args)
+
+    begin
+      files = matches(options[:directory], options[:ext])
+
+      if(options[:html])
+        HtmlWriter.new.write(options[:filename], files)
+      else
+        CsvWriter.new.write(options[:filename], files)
+      end
+    rescue
+      $stderr.print("Error: #{$!}\n")
+      exit(1)
+    end
+  end
+
+  def parse_args(args)
     options = OpenStruct.new
 
     options[:html] = false
@@ -22,14 +41,14 @@ class Options
         options[:filename] = f
       end
 
-      opts.on("--html", "Output HTML instead of CSV") do
-        options[:html] = true
-      end
-
       opts.on("-d", "--directory DIRECTORY", "Image directory to process") do |d|
         options[:directory] = d
       end
 
+      opts.on("--html", "Output HTML instead of CSV") do
+        options[:html] = true
+      end
+      
       opts.on("-h", "--help", "Help") do
         puts opts
         exit
@@ -51,25 +70,6 @@ class Options
 
     options
   end
-end
-
-class Main
-  def run(options)
-    Process.setproctitle('EXIF Writer')
-
-    begin
-      files = matches(options[:directory], options[:ext])
-
-      if(options[:html])
-        HtmlWriter.new.write(options[:filename], files)
-      else
-        CsvWriter.new.write(options[:filename], files)
-      end
-    rescue
-      $stderr.print("Error: #{$!}\n")
-      exit(1)
-    end
-  end
 
   def matches(directory, extension)
     matches = []
@@ -81,5 +81,3 @@ class Main
   end
 
 end
-
-Main.new.run(Options.parse(ARGV))

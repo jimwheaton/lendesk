@@ -1,0 +1,4 @@
+#!/usr/bin/env ruby
+
+require 'exif'
+Exif.new.run ARGV
