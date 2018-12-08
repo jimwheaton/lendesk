@@ -4,7 +4,7 @@ Writes EXIF metadata to a .csv or .html file
 
 ### Building and installing the gem
 
-1. `gem build exif-0.1.0.gemspec`
+1. `gem build exif.gemspec`
 2. `gem install exif-0.1.0.gem`
 
 ### Running from the command line

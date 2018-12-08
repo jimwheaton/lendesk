@@ -5,10 +5,13 @@ require_relative './writers/exif_writer'
 require_relative './writers/csv_writer'
 require_relative './writers/html_writer'
 
+##
+# Extracts and writes EXIF GPS data for JPG images to a CSV or HTML file
 class Exif
 
+  # Main entry point
   def run(args)
-    Process.setproctitle('EXIF Writer')
+    Process.setproctitle('LenDesk EXIF GPS Writer')
     options = parse_args(args)
 
     begin
@@ -25,6 +28,7 @@ class Exif
     end
   end
 
+  # Parse command line arguments
   def parse_args(args)
     options = OpenStruct.new
 
@@ -48,7 +52,7 @@ class Exif
       opts.on("--html", "Output HTML instead of CSV") do
         options[:html] = true
       end
-      
+
       opts.on("-h", "--help", "Help") do
         puts opts
         exit
@@ -71,6 +75,8 @@ class Exif
     options
   end
 
+  # Recursively searches the specified directory for files matching an extension
+  # Returns an array of fully qualified filenames
   def matches(directory, extension)
     matches = []
     Find.find(directory) do |path|

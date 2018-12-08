@@ -9,5 +9,5 @@ Gem::Specification.new do |s|
   s.files       = ["lib/exif.rb", "lib/writers/exif_writer.rb", "lib/writers/csv_writer.rb", "lib/writers/html_writer.rb"]
   s.homepage    = 'https://github.com/jimwheaton/lendesk'
   s.license     = 'MIT'
-  s.executables = ['exif.rb']
+  s.executables = ['exif']
 end
