@@ -11,7 +11,7 @@ class Exif
 
   # Main entry point
   def run(args)
-    Process.setproctitle('LenDesk EXIF GPS Writer')
+    Process.setproctitle('Lendesk EXIF GPS Writer')
     options = parse_args(args)
 
     begin
@@ -60,7 +60,7 @@ class Exif
     end
 
     begin
-      opt_parser.parse!(args)
+      opt_parser.parse(args)
     rescue OptionParser::ParseError
       $stderr.print("Argument Error: #{$!}\n")
       exit
@@ -85,7 +85,4 @@ class Exif
     end
     matches
   end
-
 end
-
-Exif.new.run ARGV

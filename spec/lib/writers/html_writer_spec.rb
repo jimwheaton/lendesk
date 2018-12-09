@@ -1,28 +1,12 @@
 require "spec_helper"
 require "rspec-html-matchers"
-require 'fakefs/spec_helpers'
 require_relative "../../../lib/writers/html_writer.rb"
 
 describe "HtmlWriter" do
   include RSpecHtmlMatchers
   
-
   subject { HtmlWriter.new }
-  let(:filename) { "/tmp/gps.html" }
   let(:files) { ['./spec/fixtures/no_gps_data.jpg', './spec/fixtures/has_gps_data.jpg'] }
-
-  # describe "#write" do
-  #   include FakeFS::SpecHelpers
-  #   it 'should write the html to a file' do
-  #     FakeFS do
-  #       config = File.expand_path('../../fixtures', __FILE__)
-  #       FakeFS::FileSystem.clone(config)
-        
-  #       subject.write(filename, ['./spec/fixtures/has_gps_data.jpg'])
-  #       File.exits?(filename).should be_true
-  #     end
-  #   end
-  # end
 
   describe "#build_html" do
     it 'should build table header' do

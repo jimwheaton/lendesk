@@ -3,7 +3,6 @@ require 'fakefs/spec_helpers'
 require_relative "../../../lib/writers/csv_writer.rb"
 
 describe "CsvWriter" do
-
   subject { CsvWriter.new }
   let(:files) { ['./spec/fixtures/no_gps_data.jpg', './spec/fixtures/has_gps_data.jpg'] }
 
