@@ -12,6 +12,10 @@ Writes EXIF GPS metadata to a .csv or .html file
 
 `./bin/exif`
 
+### Run specs
+
+`rspec`
+
 #### Examples
 
 Process images in current directory and output CSV to an auto-generated `exif_data_<timestamp>.csv` file:
