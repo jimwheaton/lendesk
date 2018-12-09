@@ -4,7 +4,7 @@ require_relative './exif_writer'
 ##
 # Writes a HTML file with GPS data for the specified image files in table format
 class HtmlWriter < ExifWriter
-  
+
   def write(filename, files)
     html = build_html(files)
     File.open(filename, 'w') { |f| f.puts html }
@@ -25,6 +25,8 @@ class HtmlWriter < ExifWriter
 
     builder.to_html
   end
+
+  private
   
   # Builds header: |filename|latitude|longitude|
   def build_table_header(doc)

@@ -1,16 +1,32 @@
 require "spec_helper"
 require "rspec-html-matchers"
+require 'fakefs/spec_helpers'
 require_relative "../../../lib/writers/html_writer.rb"
 
 describe "HtmlWriter" do
   include RSpecHtmlMatchers
-  before(:each) do
-    @writer = HtmlWriter.new
-  end
+  
+
+  subject { HtmlWriter.new }
+  let(:filename) { "/tmp/gps.html" }
+  let(:files) { ['./spec/fixtures/no_gps_data.jpg', './spec/fixtures/has_gps_data.jpg'] }
+
+  # describe "#write" do
+  #   include FakeFS::SpecHelpers
+  #   it 'should write the html to a file' do
+  #     FakeFS do
+  #       config = File.expand_path('../../fixtures', __FILE__)
+  #       FakeFS::FileSystem.clone(config)
+        
+  #       subject.write(filename, ['./spec/fixtures/has_gps_data.jpg'])
+  #       File.exits?(filename).should be_true
+  #     end
+  #   end
+  # end
 
   describe "#build_html" do
     it 'should build table header' do
-      html = @writer.build_html(['./spec/fixtures/has_gps_data.jpg'])
+      html = subject.build_html(['./spec/fixtures/has_gps_data.jpg'])
       expect(html).to have_tag('table') do
         with_tag 'thead' do
           with_tag 'tr' do
@@ -23,7 +39,7 @@ describe "HtmlWriter" do
     end
 
     it 'should add GPS data to tbody if image has location data' do
-      html = @writer.build_html(['./spec/fixtures/has_gps_data.jpg'])
+      html = subject.build_html(['./spec/fixtures/has_gps_data.jpg'])
       expect(html).to have_tag('table') do
         with_tag 'tbody' do
           with_tag 'tr' do
@@ -36,7 +52,7 @@ describe "HtmlWriter" do
     end
 
     it 'should add "NA" to tbody if image has does not have location data' do
-      html = @writer.build_html(['./spec/fixtures/no_gps_data.jpg'])
+      html = subject.build_html(['./spec/fixtures/no_gps_data.jpg'])
       expect(html).to have_tag('table') do
         with_tag 'tbody' do
           with_tag 'tr' do
@@ -49,7 +65,7 @@ describe "HtmlWriter" do
     end
 
     it 'should add a row for each image file' do
-      html = @writer.build_html(['./spec/fixtures/no_gps_data.jpg', './spec/fixtures/has_gps_data.jpg'])
+      html = subject.build_html(['./spec/fixtures/no_gps_data.jpg', './spec/fixtures/has_gps_data.jpg'])
       expect(html).to have_tag('table') do
         with_tag 'tbody' do
           with_tag 'tr' do

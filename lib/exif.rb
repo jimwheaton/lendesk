@@ -87,3 +87,5 @@ class Exif
   end
 
 end
+
+Exif.new.run ARGV
