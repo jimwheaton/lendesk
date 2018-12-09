@@ -1,10 +1,10 @@
-source "https://rubygems.org"
+source 'https://rubygems.org'
 
-gem "exifr"
-gem "nokogiri"
+gem 'exifr'
+gem 'nokogiri'
 
 group :test do
-  gem "rspec"
+  gem 'rspec'
   gem 'rspec-html-matchers'
   gem 'fakefs'
 end

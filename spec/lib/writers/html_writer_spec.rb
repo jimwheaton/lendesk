@@ -7,10 +7,12 @@ describe "HtmlWriter" do
   
   subject { HtmlWriter.new }
   let(:files) { ['./spec/fixtures/no_gps_data.jpg', './spec/fixtures/has_gps_data.jpg'] }
+  let(:files_no_gps)  { ['./spec/fixtures/no_gps_data.jpg'] }
+  let(:files_has_gps)  { ['./spec/fixtures/has_gps_data.jpg'] }
 
   describe "#build_html" do
     it 'should build table header' do
-      html = subject.build_html(['./spec/fixtures/has_gps_data.jpg'])
+      html = subject.build_html(files)
       expect(html).to have_tag('table') do
         with_tag 'thead' do
           with_tag 'tr' do
@@ -23,7 +25,7 @@ describe "HtmlWriter" do
     end
 
     it 'should add GPS data to tbody if image has location data' do
-      html = subject.build_html(['./spec/fixtures/has_gps_data.jpg'])
+      html = subject.build_html(files_has_gps)
       expect(html).to have_tag('table') do
         with_tag 'tbody' do
           with_tag 'tr' do
@@ -36,7 +38,7 @@ describe "HtmlWriter" do
     end
 
     it 'should add "NA" to tbody if image has does not have location data' do
-      html = subject.build_html(['./spec/fixtures/no_gps_data.jpg'])
+      html = subject.build_html(files_no_gps)
       expect(html).to have_tag('table') do
         with_tag 'tbody' do
           with_tag 'tr' do
@@ -49,7 +51,7 @@ describe "HtmlWriter" do
     end
 
     it 'should add a row for each image file' do
-      html = subject.build_html(['./spec/fixtures/no_gps_data.jpg', './spec/fixtures/has_gps_data.jpg'])
+      html = subject.build_html(files)
       expect(html).to have_tag('table') do
         with_tag 'tbody' do
           with_tag 'tr' do
